@@ -4,9 +4,11 @@ services:
     api:
         image: todo_api
         container_name: todo_api
-        build: ./backend/Dockerfile
+        build: 
+          context: ./backend
+          dockerfile: Dockerfile
         ports:
-            - '8080:80'
+            - '8000:80'
         volumes:
             - '.:/var/www/html'
         # networks:
