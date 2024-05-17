@@ -1,9 +1,29 @@
-FROM php:8.1.4-cli
+FROM php:8.1-fpm
+    
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    curl \
+    libonig-dev \
+    libzip-dev \
+    libgd-dev
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y libpq-dev \
-  && docker-php-ext-install pdo pdo_pgsql pgsql \
-  && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
-# RUN docker-php-ext-install pdo pdo_pgsql && docker-php-ext-enable pdo_pgsql
+# Install extensions
+RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+RUN docker-php-ext-configure gd --with-external-gd
+RUN docker-php-ext-install gd
+RUN docker-php-ext-install pdo pdo_pgsql
 
 # Install composer globally
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
