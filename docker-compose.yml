@@ -11,24 +11,24 @@ services:
       - "8000:80"
     volumes:
       - "./backend:/var/www/html"
-    # networks:
-    #     - sail
+    networks:
+      - todo_network
     depends_on:
-      - db
+      - pgsql
 
-  db:
-    image: 'postgres:14.2'
+  pgsql:
+    image: postgres
     container_name: todo_rds
     restart: always
     ports:
       - "5432:5432"
     environment:
-      PGPASSWORD: '${DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${DB_DATABASE}'
-      POSTGRES_USER: '${DB_USERNAME}'
-      POSTGRES_PASSWORD:  '${DB_PASSWORD:-secret}'
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: admin123
     volumes:
       - todo_rds:/var/lib/postgresql/data
+    networks:
+      - todo_network
 
   pgadmin:
     image: dpage/pgadmin4
@@ -41,7 +41,15 @@ services:
       PGADMIN_DEFAULT_PASSWORD: todo123
     volumes:
       - todo_pgadmin:/var/lib/pgadmin
+    networks:
+      - todo_network
+
+networks:
+    todo_network:
+      driver: bridge
 
 volumes:
   todo_rds:
+      driver: local
   todo_pgadmin:
+      driver: local
