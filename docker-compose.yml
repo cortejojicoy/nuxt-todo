@@ -10,7 +10,7 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ".:/var/www/html"
+      - "./backend:/var/www/html"
     # networks:
     #     - sail
     depends_on:
@@ -27,6 +27,8 @@ services:
       POSTGRES_PASSWORD:  '${DB_PASSWORD:-secret}'
     volumes:
       - todo_rds:/var/lib/postgresql/data
+    env_file:
+      - ./backend/.env
 
   pgadmin:
     image: dpage/pgadmin4
