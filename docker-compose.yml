@@ -23,12 +23,12 @@ services:
     ports:
       - "5432:5432"
     environment:
+      PGPASSWORD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE}'
       POSTGRES_USER: '${DB_USERNAME}'
       POSTGRES_PASSWORD:  '${DB_PASSWORD:-secret}'
     volumes:
       - todo_rds:/var/lib/postgresql/data
-    env_file:
-      - ./backend/.env
 
   pgadmin:
     image: dpage/pgadmin4
