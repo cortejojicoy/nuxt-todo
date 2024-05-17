@@ -1,0 +1,16 @@
+# For more information: https://laravel.com/docs/sail
+version: '3'
+services:
+    api:
+        image: todo_api
+        container_name: todo_api
+        build: ./backend/Dockerfile
+        ports:
+            - '8080:80'
+        volumes:
+            - '.:/var/www/html'
+        # networks:
+        #     - sail
+        # depends_on:
+        #     - pgsql
+

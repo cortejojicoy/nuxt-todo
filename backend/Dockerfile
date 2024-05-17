@@ -15,8 +15,8 @@ RUN pecl install redis \
     && docker-php-ext-enable redis
 
 # Set working directory
-WORKDIR /api
-COPY . /api
+WORKDIR /var/www/html
+COPY . /var/www/html
 
 # Install dependencies
 RUN composer install
