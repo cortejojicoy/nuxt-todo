@@ -1,5 +1,6 @@
 version: "3.8"
 services:
+  # backend
   api:
     image: todo_api
     container_name: todo_api
@@ -15,6 +16,7 @@ services:
     depends_on:
       - pgsql
 
+  # database
   pgsql:
     image: postgres
     container_name: todo_rds
@@ -29,6 +31,22 @@ services:
     networks:
       - todo_network
 
+  # db manager
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: todo_pgadmin
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: todo123
+    volumes:
+      - todo_pgadmin:/var/lib/pgadmin
+    networks:
+      - todo_network
+
+  # db manager
   adminer:
     image: adminer
     container_name: adminer
