@@ -1,5 +1,4 @@
-# For more information: https://laravel.com/docs/sail
-version: "3"
+version: "3.8"
 services:
   api:
     image: todo_api
@@ -8,7 +7,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8000:80"
+      - "8000:8000"
     volumes:
       - "./backend:/var/www/html"
     networks:
@@ -30,26 +29,20 @@ services:
     networks:
       - todo_network
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: todo_pgadmin
-    restart: always
+  adminer:
+    image: adminer
+    container_name: adminer
     ports:
-      - "8888:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: test@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: todo123
-    volumes:
-      - todo_pgadmin:/var/lib/pgadmin
+      - "8282:8080"
     networks:
       - todo_network
 
 networks:
-    todo_network:
-      driver: bridge
+  todo_network:
+    driver: bridge
 
 volumes:
   todo_rds:
-      driver: local
+    driver: local
   todo_pgadmin:
-      driver: local
+    driver: local
