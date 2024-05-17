@@ -1,18 +1,45 @@
 # For more information: https://laravel.com/docs/sail
-version: '3'
+version: "3"
 services:
-    api:
-        image: todo_api
-        container_name: todo_api
-        build: 
-          context: ./backend
-          dockerfile: Dockerfile
-        ports:
-            - '8000:80'
-        volumes:
-            - '.:/var/www/html'
-        # networks:
-        #     - sail
-        # depends_on:
-        #     - pgsql
+  api:
+    image: todo_api
+    container_name: todo_api
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    volumes:
+      - ".:/var/www/html"
+    # networks:
+    #     - sail
+    depends_on:
+      - db
 
+  db:
+    image: 'postgres:14.2'
+    container_name: todo_rds
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: '${DB_USERNAME}'
+      POSTGRES_PASSWORD:  '${DB_PASSWORD:-secret}'
+    volumes:
+      - todo_rds:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: todo_pgadmin
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: todo123
+    volumes:
+      - todo_pgadmin:/var/lib/pgadmin
+
+volumes:
+  todo_rds:
+  todo_pgadmin:
