@@ -1,30 +1,47 @@
-FROM php:8.1-fpm
-    
-# Install dependencies
-RUN apt-get update && apt-get install -y \
+# PHP-FPM is a FastCGI implementation for PHP.
+# Read more here: https://hub.docker.com/_/php
+FROM php:8.2-fpm
+
+
+RUN apt-get update
+
+# Install useful tools
+RUN apt-get -y install apt-utils nano wget dialog vim
+
+# Install system dependencies
+RUN apt-get -y install --fix-missing \
+    apt-utils \
     build-essential \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
-    zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
     git \
     curl \
-    libonig-dev \
+    libcurl4 \
+    libcurl4-openssl-dev \
+    zlib1g-dev \
     libzip-dev \
-    libgd-dev
+    zip \
+    libbz2-dev \
+    locales \
+    libmcrypt-dev \
+    libicu-dev \
+    libonig-dev \
+    libxml2-dev
 
-RUN docker-php-ext-install pdo pdo_pgsql
+RUN docker-php-ext-install \
+    exif \
+    pcntl \
+    bcmath \
+    ctype \
+    curl \
+    pcntl \
+    zip 
+
+# Install Postgre PDO
+RUN apt-get install -y libpq-dev \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install pdo pdo_pgsql pgsql
+
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install extensions
-RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-RUN docker-php-ext-configure gd --with-external-gd
-RUN docker-php-ext-install gd
 
 # Install composer globally
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
