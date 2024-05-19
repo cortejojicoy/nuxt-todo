@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   # backend
-  api:
+  app:
     image: todo_api
     container_name: todo_api
     build:
@@ -18,16 +18,15 @@ services:
 
   # database
   pgsql:
-    image: postgres
-    container_name: todo_rds
-    restart: always
+    image: "postgres:14.2"
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - todo_rds:/var/lib/postgresql/data
+      - ./docker/postgres/data:/var/lib/postgresql/data
     networks:
       - todo_network
 
@@ -39,8 +38,8 @@ services:
     ports:
       - "8888:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: test@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: todo123
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
     volumes:
       - todo_pgadmin:/var/lib/pgadmin
     networks:
