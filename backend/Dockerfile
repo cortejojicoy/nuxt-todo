@@ -49,6 +49,8 @@ RUN php composer-setup.php
 RUN php -r "unlink('composer-setup.php');"
 RUN mv composer.phar /usr/local/bin/composer
 
+RUN php artisan migrate
+
 RUN pecl install redis \
     && docker-php-ext-enable redis
 
