@@ -16,7 +16,7 @@ class AuthController extends Controller
 
     public function handleProviderCallback(Request $request)
     {
-        $socialAccount = Socialite::driver('github')->user();
+        $socialAccount = Socialite::driver('github')->userFromToken($request->access_provider_token);
         $user = User::updateOrCreate([
                 'social_id' => $socialAccount->id
             ], [
@@ -25,8 +25,13 @@ class AuthController extends Controller
             ]
         );
 
+        $token = [
+            'token' => $user->createToken('sanctum+socialite')->plainTextToken,
+            'user' => $user
+        ];
+
         return response()->json([
-            $user
+            $token
         ], 200);
     }
 }
