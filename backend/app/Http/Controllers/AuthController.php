@@ -9,14 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function redirecToProvider()
+    public function redirectToProvider(Request $request)
     {
-        return Socialite::driver('github')->redirect();
+        // return Socialite::driver($request->provider)->stateless()->redirect();
+        return Socialite::driver($request->provider)->scopes(['read:user', 'public_repo'])->stateless()->redirect();
     }
 
     public function handleProviderCallback(Request $request)
     {
-        $socialAccount = Socialite::driver('github')->userFromToken($request->access_provider_token);
+        $socialAccount = Socialite::driver($request->provider)->userFromToken($request->access_provider_token);
         $user = User::firstOrCreate(
             [
                 'social_id' => $socialAccount->id
@@ -38,5 +39,11 @@ class AuthController extends Controller
         return response()->json([
             $token
         ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+        return response()->json(['message' => 'Logged out successfully']);
     }
 }
