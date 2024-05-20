@@ -17,11 +17,16 @@ class AuthController extends Controller
     public function handleProviderCallback(Request $request)
     {
         $socialAccount = Socialite::driver('github')->userFromToken($request->access_provider_token);
-        $user = User::updateOrCreate([
+        $user = User::firstOrCreate(
+            [
                 'social_id' => $socialAccount->id
             ], [
+                'name' => $socialAccount->name ?? '',
                 'email' => $socialAccount->email,
+                'password' => $socialAccount->password ?? '',
                 'social_token' => $socialAccount->token,
+                'social_refresh_token' => $socialAccount->refreshToken ?? '',
+                'social_avatar' => $socialAccount->avatar,
             ]
         );
 
