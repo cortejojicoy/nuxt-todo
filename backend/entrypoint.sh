@@ -7,12 +7,12 @@ if [ "$1" = 'php' ]; then
     exec "$@"
 fi
 
-cd /var/www/html  # Important! Change to the project directory
+cd /backend  # Important! Change to the project directory
 
 # Check if .env exists and copy example if not
-if [ ! -f .env ]; then
-    cp .env.example .env
-fi
+# if [ ! -f .env ]; then
+#     cp .env.example .env
+# fi
 
 # Check if the command is 'php artisan serve'
 if [ "$1" = 'artisan' ] && [ "$2" = 'serve' ]; then
