@@ -49,6 +49,8 @@ RUN php composer-setup.php
 RUN php -r "unlink('composer-setup.php');"
 RUN mv composer.phar /usr/local/bin/composer
 
+RUN php artisan migrate --force
+
 RUN pecl install redis \
     && docker-php-ext-enable redis
 
@@ -59,19 +61,6 @@ COPY . /var/www/html
 # Install dependencies
 RUN composer install
 
-# Set permissions (optional, but good practice)
-RUN chown -R www-data:www-data /var/www/html
-
-# Custom Entrypoint Script (entrypoint.sh)
-COPY entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Run the entrypoint script
-ENTRYPOINT ["entrypoint.sh"]
-
-# Default command (overridden by entrypoint.sh)
-CMD ["php-fpm"]
-
 # run
-# EXPOSE 80
-# CMD php artisan serve --host=0.0.0.0 --port=8000
+EXPOSE 80
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
