@@ -14,12 +14,17 @@
                 <button type="submit">Login</button>
             </form> -->
             <div class="social-login">
-                <button class="github" @click="''">Login with GitHub</button>
+                <button class="github" @click="login">Login with GitHub</button>
                 <button class="google" @click="''">Login with Google</button>
             </div>
         </div>
     </div>
 </template>
+
+<script setup lang="ts">
+import { useLogin } from '~/stores/use-login';
+const { login } = useLogin()
+</script>
 
 <style lang="scss">
 .login-container {
