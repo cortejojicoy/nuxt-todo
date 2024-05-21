@@ -6,6 +6,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+
 
 class AuthController extends Controller
 {
@@ -20,7 +23,7 @@ class AuthController extends Controller
             $socialAccount = Socialite::driver('github')->stateless()->user();
 
             // Check if the user already exists in your database
-            $user = User::where('email', $socialAccount->getEmail())->first();
+            $user = User::where('email', $socialAccount->email)->first();
             if($user) {
                 Auth::login($user, true);
             } else {
@@ -34,9 +37,25 @@ class AuthController extends Controller
                     'social_avatar' => $socialAccount->avatar,
                 ]);
             }
+            // generate random strings for temporary token
+            $tempToken = Str::random(40);
             $token = $user->createToken('sanctum+socialite')->plainTextToken;
-            return redirect( config('app.sanctum_stateful_domains').'/auth/callback?token='.$token);
+
+            // put token in cache for 5mins
+            Cache::put($tempToken, $token, now()->addMinutes(5));
+
+            return redirect( config('app.sanctum_stateful_domains').'/auth/callback?tempToken='. $tempToken);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
         }
+    }
+
+    public function fetchToken(Request $request)
+    {   
+        $userData = Cache::get($request->tempToken);
+        if($userData) return response()->json($userData);
+
+        return response()->json(['error', 'Invalid token'], 400);
     }
 
     public function user()
