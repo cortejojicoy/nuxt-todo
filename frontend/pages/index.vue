@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import { useLogin } from '~/stores/use-login';
+const { loginWithGithub } = useLogin()
+
+// definePageMeta({
+//   middleware: ["auth"]
+// })
+
+</script>
+
 <template>
     <div class="login-container">
         <div class="login-form">
@@ -14,17 +24,12 @@
                 <button type="submit">Login</button>
             </form> -->
             <div class="social-login">
-                <button class="github" @click="login">Login with GitHub</button>
+                <button class="github" @click="loginWithGithub">Login with GitHub</button>
                 <button class="google" @click="''">Login with Google</button>
             </div>
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-import { useLogin } from '~/stores/use-login';
-const { login } = useLogin()
-</script>
 
 <style lang="scss">
 .login-container {
