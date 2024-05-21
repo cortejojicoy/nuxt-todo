@@ -144,6 +144,15 @@ return [
         // 'store' => 'redis',
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | SANCTUM STATEFUL DOMAINS
+    |--------------------------------------------------------------------------
+    */
+
+    'sanctum_stateful_domains' => env('SANCTUM_STATEFUL_DOMAINS', 'http://localhost:3000'),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -185,7 +194,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        ])->toArray(),
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
-    ])->toArray(),
 
 ];
