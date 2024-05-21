@@ -1,38 +1,66 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
 import { useRoute } from "vue-router";
-import { APIAxios } from "~/shared/api";
 
-export const useLogin = defineStore("login", () => {
-  // state
-  const route = useRoute();
-  const token = ref<string | null>(null);
-  const user = ref<object | null>(null);
-  const tempToken = route.query.tempToken as string;
+interface ILoginInterface {
 
-  // actions
+}
 
-  const loginWithGithub = () => {
-    window.location.href = "http://localhost:8000/api/auth";
-  };
+const route = useRoute();
+export const useLogin = defineStore("login", {
+  state:() => ({
+    isAuthenticate: false,
+    token: ''
+  }),
 
-  const logout = () => {
-    
-  };
+  actions: {
+    loginWithGithub() {
+      window.location.href = `${process.env.BASE_URL}/auth`
+    },
 
-  const getToken = async () => {
-    try {
-      const { data } = await APIAxios.get(`/get-token?tempToken=${tempToken}`);
-      token.value = data;
-    } catch (e: unknown) {
-      console.log(e);
+    async loginWithToken() {
+      try {
+        const { data }: any = await useFetch(
+          `${process.env.BASE_URL}/get-token`, 
+          {
+            query: {
+              tempToken: route.query.tempToken as string,
+            },
+          }
+        );
+        this.token = data
+      } catch(e:unknown) {
+        console.log(e)
+      }
     }
-  };
+  }
+  // state
+  // const token = ref<string | null>(null);
+  // const user = ref<object | null>(null);
+  // const tempToken = route.query.tempToken as string;
 
-  const isAuthenticated = () => {
-    return !!token.value;
-  };
+  // // actions
 
-  // return
-  return { loginWithGithub, getToken, token, isAuthenticated };
+  // const loginWithGithub = () => {
+  //   window.location.href = "http://localhost:8000/api/auth";
+  // };
+
+  // const logout = () => {
+    
+  // };
+
+  // const getToken = async () => {
+  //   try {
+  //     const { data } = await APIAxios.get(`/get-token?tempToken=${tempToken}`);
+  //     token.value = data;
+  //   } catch (e: unknown) {
+  //     console.log(e);
+  //   }
+  // };
+
+  // const isAuthenticated = () => {
+  //   return !!token.value;
+  // };
+
+  // // return
+  // return { loginWithGithub, getToken, token, isAuthenticated };
 });
