@@ -3,5 +3,6 @@ export default defineNuxtConfig({
   ssr: false,
   devtools: { enabled: true },
 
-  modules: ["@pinia/nuxt", "@vueuse/nuxt",]
+  modules: ["@pinia/nuxt", "@vueuse/nuxt"],
+  plugins: ["~/plugins/apollo-client.ts"],
 });

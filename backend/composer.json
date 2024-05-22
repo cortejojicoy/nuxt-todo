@@ -10,7 +10,9 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/socialite": "^5.14",
-        "laravel/tinker": "^2.8"
+        "laravel/tinker": "^2.8",
+        "nuwave/lighthouse": "^6.36",
+        "rebing/graphql-laravel": "^9.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

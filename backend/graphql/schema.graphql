@@ -1,0 +1,15 @@
+type Query {
+    todos: [Tasks!] @all
+    todo(id: ID!): Tasks @find
+}
+
+type Mutation {
+    createTodo(description: String!, status: String!): Tasks @create
+    updateTodoStatus(id: ID!, status: String!): Tasks @update
+}
+
+type Tasks {
+    id: ID!
+    description: String!
+    status: String!
+}

@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useLogin } from "~/stores/use-login";
+import { useTodo } from "~/stores/use-todo";
 const login = useLogin();
+const todo = useTodo();
 const { getUserDetails, logout } = login;
+const { fetchTodos, createTodo } = todo;
 const { user } = storeToRefs(login);
 
 const newTodo = ref<string>("");
@@ -10,8 +13,9 @@ const todos = ref<string[]>([]);
 const inProgress = ref<string[]>([]);
 const done = ref<string[]>([]);
 
-const addTodo = () => {
+const handleAddTodo = async() => {
   if (newTodo.value.trim()) {
+    await createTodo(newTodo.value, 'todo')
     todos.value.push(newTodo.value.trim());
     newTodo.value = "";
   }
@@ -56,7 +60,7 @@ definePageMeta({
             v-model="newTodo"
             placeholder="Add a new task..."
           ></textarea>
-          <button @click="addTodo">Add</button>
+          <button @click="handleAddTodo">Add</button>
           <ul>
             <li v-for="(item, index) in todos" :key="index">
               {{ item }}
