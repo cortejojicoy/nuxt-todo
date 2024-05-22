@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useLogin } from "~/stores/use-login";
 const router = useRouter();
-const { getToken } = useLogin();
+const { loginWithToken } = useLogin();
 
 onMounted(async () => {
-  await getToken();
+  await loginWithToken();
   router.push('/dashboard');
 });
-
 </script>
 
 <template>
