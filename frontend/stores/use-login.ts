@@ -1,66 +1,68 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
+import { APIAxios } from "~/shared/api";
 
+const ENDPOINT = "http://localhost:8000/api";
 interface ILoginInterface {
-
+  id?: number;
+  email?: string;
+  avatar?: string;
 }
-
-const route = useRoute();
-export const useLogin = defineStore("login", {
-  state:() => ({
-    isAuthenticate: false,
-    token: ''
-  }),
-
-  actions: {
-    loginWithGithub() {
-      window.location.href = `${process.env.BASE_URL}/auth`
-    },
-
-    async loginWithToken() {
-      try {
-        const { data }: any = await useFetch(
-          `${process.env.BASE_URL}/get-token`, 
-          {
-            query: {
-              tempToken: route.query.tempToken as string,
-            },
-          }
-        );
-        this.token = data
-      } catch(e:unknown) {
-        console.log(e)
-      }
-    }
-  }
+export const useLogin = defineStore("login", () => {
   // state
-  // const token = ref<string | null>(null);
-  // const user = ref<object | null>(null);
-  // const tempToken = route.query.tempToken as string;
+  const route = useRoute();
+  const token = ref<string | null>(localStorage.getItem("authToken"));
+  const user = ref<object | null>(
+    JSON.parse(localStorage.getItem("userDetails") as string)
+  );
+  const tempToken = route.query.tempToken as string;
 
-  // // actions
+  // actions
+  const loginWithGithub = () => {
+    window.location.href = `${ENDPOINT}/auth`;
+  };
 
-  // const loginWithGithub = () => {
-  //   window.location.href = "http://localhost:8000/api/auth";
-  // };
+  const logout = () => {};
 
-  // const logout = () => {
-    
-  // };
+  const getUserDetails = async () => {
+    try {
+      const authToken = localStorage.getItem("authToken");
+      const { data } = await APIAxios.get(`${ENDPOINT}/user`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      user.value = data;
+      localStorage.setItem("userDetails", JSON.stringify(data));
+    } catch (e: unknown) {
+      console.log(e);
+    }
+  };
 
-  // const getToken = async () => {
-  //   try {
-  //     const { data } = await APIAxios.get(`/get-token?tempToken=${tempToken}`);
-  //     token.value = data;
-  //   } catch (e: unknown) {
-  //     console.log(e);
-  //   }
-  // };
+  const loginWithToken = async () => {
+    try {
+      const { data } = await APIAxios.get(
+        `${ENDPOINT}/get-token?tempToken=${tempToken}`
+      );
+      token.value = data;
+      localStorage.setItem("authToken", data);
+    } catch (e: unknown) {
+      console.log(e);
+    }
+  };
 
-  // const isAuthenticated = () => {
-  //   return !!token.value;
-  // };
+  const isAuthenticated = () => {
+    return !!token.value;
+  };
 
-  // // return
-  // return { loginWithGithub, getToken, token, isAuthenticated };
+  // return
+  return {
+    user,
+    token,
+    loginWithGithub,
+    loginWithToken,
+    getUserDetails,
+    isAuthenticated,
+  };
 });
