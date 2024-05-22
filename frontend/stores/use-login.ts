@@ -7,13 +7,13 @@ const ENDPOINT = "http://localhost:8000/api";
 interface ILoginInterface {
   id?: number;
   email?: string;
-  avatar?: string;
+  social_avatar?: string;
 }
 export const useLogin = defineStore("login", () => {
   // state
   const route = useRoute();
   const token = ref<string | null>(localStorage.getItem("authToken"));
-  const user = ref<object | null>(
+  const user = ref<ILoginInterface | null>(
     JSON.parse(localStorage.getItem("userDetails") as string)
   );
   const tempToken = route.query.tempToken as string;
@@ -23,7 +23,16 @@ export const useLogin = defineStore("login", () => {
     window.location.href = `${ENDPOINT}/auth`;
   };
 
-  const logout = () => {};
+  const logout = () => {
+    const authToken = localStorage.getItem("authToken");
+    APIAxios.post(`${ENDPOINT}/logout`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`
+      }
+    })
+    localStorage.removeItem("userDetails")
+    localStorage.removeItem("authToken")
+  };
 
   const getUserDetails = async () => {
     try {
@@ -52,17 +61,19 @@ export const useLogin = defineStore("login", () => {
     }
   };
 
-  const isAuthenticated = () => {
-    return !!token.value;
-  };
+  // getters
+  // const isAuthenticated = computed(() => !token.value)
+  // const userDetails = computed(() => user[0].value);
 
   // return
   return {
     user,
     token,
+    logout,
     loginWithGithub,
     loginWithToken,
+    // userDetails,
     getUserDetails,
-    isAuthenticated,
+    // isAuthenticated,
   };
 });

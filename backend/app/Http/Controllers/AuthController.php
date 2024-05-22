@@ -61,7 +61,7 @@ class AuthController extends Controller
     public function user()
     {
         $user = User::where('email',Auth::user()->email)->first();
-        return response()->json([$user], 200);
+        return response()->json($user, 200);
     }
 
     public function logout(Request $request)

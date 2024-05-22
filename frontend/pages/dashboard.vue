@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
 import { ref } from "vue";
 import { useLogin } from "~/stores/use-login";
 const login = useLogin();
-const { user } = storeToRefs(login)
-const { getUserDetails } = login
+const { getUserDetails, logout } = login;
+const { user } = storeToRefs(login);
 
 const newTodo = ref<string>("");
 const todos = ref<string[]>([]);
@@ -29,8 +28,8 @@ const moveToDone = (index: number) => {
 };
 
 onMounted(async () => {
-  await getUserDetails()
-})
+  await getUserDetails();
+});
 
 definePageMeta({
   middleware: ["auth"],
@@ -39,50 +38,85 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="todo-container">
-    <div>
-       <h1>
-        {{ user }}
-      </h1>
+  <div class="user-container">
+    <div class="user-info">
+      <img :src="user?.social_avatar" alt="User Avatar" class="user-avatar" />
+      <h4 class="user-email">
+        {{ user?.email }}
+      </h4>
+
+      <button @click="logout">Logout</button>
     </div>
-    <div class="todo-box todo">
-      <div class="content">
-        <h3>To-do</h3>
-        <textarea v-model="newTodo" placeholder="Add a new task..."></textarea>
-        <button @click="addTodo">Add</button>
-        <ul>
-          <li v-for="(item, index) in todos" :key="index">
-            {{ item }}
-            <button @click="moveToInProgress(index)">In-progress</button>
-          </li>
-        </ul>
+
+    <div class="todo-container">
+      <div class="todo-box todo">
+        <div class="content">
+          <h3>To-do</h3>
+          <textarea
+            v-model="newTodo"
+            placeholder="Add a new task..."
+          ></textarea>
+          <button @click="addTodo">Add</button>
+          <ul>
+            <li v-for="(item, index) in todos" :key="index">
+              {{ item }}
+              <button @click="moveToInProgress(index)">In-progress</button>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-    <div class="todo-box in-progress">
-      <div class="content">
-        <h3>In-progress</h3>
-        <ul>
-          <li v-for="(item, index) in inProgress" :key="index">
-            {{ item }}
-            <button @click="moveToDone(index)">Done</button>
-          </li>
-        </ul>
+      <div class="todo-box in-progress">
+        <div class="content">
+          <h3>In-progress</h3>
+          <ul>
+            <li v-for="(item, index) in inProgress" :key="index">
+              {{ item }}
+              <button @click="moveToDone(index)">Done</button>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-    <div class="todo-box done">
-      <div class="content">
-        <h3>Done</h3>
-        <ul>
-          <li v-for="(item, index) in done" :key="index">
-            {{ item }}
-          </li>
-        </ul>
+      <div class="todo-box done">
+        <div class="content">
+          <h3>Done</h3>
+          <ul>
+            <li v-for="(item, index) in done" :key="index">
+              {{ item }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="scss">
+.user-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+
+  .user-avatar {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+  }
+
+  .user-email {
+    font-size: .8rem;
+    font-weight: bold;
+  }
+}
+
 .todo-container {
   display: flex;
   justify-content: center;
