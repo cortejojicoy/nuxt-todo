@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 import { ref } from "vue";
+import { useLogin } from "~/stores/use-login";
+const login = useLogin();
+const { user } = storeToRefs(login)
+const { getUserDetails } = login
 
 const newTodo = ref<string>("");
 const todos = ref<string[]>([]);
@@ -23,6 +28,10 @@ const moveToDone = (index: number) => {
   inProgress.value.splice(index, 1);
 };
 
+onMounted(async () => {
+  await getUserDetails()
+})
+
 definePageMeta({
   middleware: ["auth"],
   // or middleware: 'auth'
@@ -31,6 +40,11 @@ definePageMeta({
 
 <template>
   <div class="todo-container">
+    <div>
+       <h1>
+        {{ user }}
+      </h1>
+    </div>
     <div class="todo-box todo">
       <div class="content">
         <h3>To-do</h3>
@@ -129,7 +143,7 @@ definePageMeta({
         padding: 0;
         width: 100%;
         margin: 0;
-  
+
         li {
           display: flex;
           justify-content: space-between;
@@ -139,12 +153,12 @@ definePageMeta({
           margin-bottom: 10px;
           border-radius: 4px;
           border: 1px solid #ddd;
-  
+
           button {
             margin: 0;
             padding: 5px 10px;
             background-color: #28a745;
-  
+
             &:hover {
               background-color: #218838;
             }
