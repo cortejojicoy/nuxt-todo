@@ -46,7 +46,7 @@ class AuthController extends Controller
 
             return redirect( config('app.sanctum_stateful_domains').'/auth/callback?tempToken='. $tempToken);
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -61,7 +61,7 @@ class AuthController extends Controller
     public function user()
     {
         $user = User::where('email',Auth::user()->email)->first();
-        return response()->json([$user], 200);
+        return response()->json($user, 200);
     }
 
     public function logout(Request $request)
