@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useLogin } from '~/stores/use-login';
-const { loginWithGithub } = useLogin()
+// const { loginWithGithub } = useLogin()
+const auth = useLogin()
 
 // definePageMeta({
 //   middleware: ["auth"]
 // })
-
 </script>
 
 <template>
@@ -24,7 +24,7 @@ const { loginWithGithub } = useLogin()
                 <button type="submit">Login</button>
             </form> -->
             <div class="social-login">
-                <button class="github" @click="loginWithGithub">Login with GitHub</button>
+                <button class="github" @click="auth.loginWithGithub">Login with GitHub</button>
                 <button class="google" @click="''">Login with Google</button>
             </div>
         </div>
