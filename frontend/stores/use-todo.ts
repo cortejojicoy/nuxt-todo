@@ -5,7 +5,7 @@ import { ref } from "vue";
 
 export const useTodo = defineStore("todo", () => {
   const todos = ref<[] | null>([]);
-  const todo = ref<null>(null);
+  const todo = ref<[] | null>(null);
 
   // actions
   const fetchTodos = async () => {
@@ -27,7 +27,28 @@ export const useTodo = defineStore("todo", () => {
     }
   };
 
-  const createTodo = () => {};
+  const createTodo = async (description: string, status: string) => {
+    const { $apollo }: any = useNuxtApp();
+    const CREATE_TODO_MUTATION = gql`
+      mutation createTodo($description: String!, $status: String!) {
+        createTodo(description: $description, status: $status) {
+          id
+          description
+          status
+        }
+      }
+    `;
+
+    try {
+      const { data } = await $apollo.mutate({
+        mutation: CREATE_TODO_MUTATION,
+        variables: { description, status },
+      });
+      todo.value = data.createTodo;
+    } catch (e: unknown) {
+      console.log(e);
+    }
+  };
 
   return {
     fetchTodos,
